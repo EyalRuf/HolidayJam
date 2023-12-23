@@ -7,15 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class InitGameState : State
+public class ExitGameplayState : State
 {
     [Inject] GameManager _gameManager;
 
     protected override void OnEnter()
     {
-        // init game stuff
+        // end game stuff
+        _gameManager.EndGame();
 
-        _gameManager.StartGame();
         owningStateMachine.ToNextState();
     }
 

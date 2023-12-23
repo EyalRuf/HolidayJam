@@ -1,3 +1,4 @@
+using CardboardCore.DI;
 using JetBrains.Annotations;
 using System;
 using System.Collections;
@@ -14,9 +15,16 @@ namespace TarodevController
     /// You can play and compete for best times here: https://tarodev.itch.io/extended-ultimate-2d-controller
     /// If you hve any questions or would like to brag about your score, come to discord: https://discord.gg/tarodev
     /// </summary>
+    [Injectable]
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class PlayerController : MonoBehaviour, IPlayerController
     {
+        [Header("realshit")]
+        private bool isPaused = true;
+        private Vector3 pausePos = Vector3.zero;
+        private Vector3 pauseVel = Vector3.zero;
+
+        [Header("shit")]
         [SerializeField] private ScriptableStats _stats;
         private Rigidbody2D _rb;
         private CapsuleCollider2D _col;
@@ -27,10 +35,9 @@ namespace TarodevController
         // Dash-related variables
         private bool isDashing;
         private float lastClickTime;
-        private float lastClickdir;
         private float _time;
-        public int dashCounter;
-        public int dashCounterUp;
+        private int dashCounter;
+        private int dashCounterUp;
 
         #region Interface
         public Vector2 FrameInput => _frameInput.Move;
@@ -46,7 +53,28 @@ namespace TarodevController
             _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
         }
 
+        public void PauseCharacter () {
+            isPaused = true;
+            pausePos = _rb.position;
+            pauseVel = _rb.velocity;
+            _rb.velocity = Vector3.zero;
+
+        }
+        public void UnpauseCharacter() {
+            isPaused = false;
+
+            _rb.position = pausePos;
+            _rb.velocity = pauseVel;
+        }
+
         private void Update() {
+            if (isPaused) {
+                _rb.position = pausePos;
+                _rb.velocity = Vector3.zero;
+
+                return;
+            }
+
             _time += Time.deltaTime;
             GatherInput();
 
@@ -97,11 +125,6 @@ namespace TarodevController
                     lastClickTime = Time.time;
                     dashCounter = direction;
                 }
-
-                Debug.Log("dir = " + direction);
-                Debug.Log("dirUp = " + directionUp);
-                Debug.Log("dashCounter = " + dashCounter);
-                Debug.Log("dashCounterUp = " + dashCounterUp);
             }
         }
 
@@ -111,6 +134,10 @@ namespace TarodevController
         }
 
         private void FixedUpdate() {
+            if (isPaused) {
+                return;
+            }
+
             CheckCollisions();
 
             HandleJump();

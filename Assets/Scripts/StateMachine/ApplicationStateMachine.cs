@@ -14,23 +14,11 @@ public class ApplicationStateMachine : StateMachine
         AddStaticTransition<MenuState, InitGameState>();
         AddStaticTransition<InitGameState, GameState>();
 
-        // Monologue
-        //AddFreeFlowTransition<GameState, MonologueState>();
-        //AddStaticTransition<MonologueState, GameState>();
-
-        // Player Halt
-        //AddFreeFlowTransition<GameState, PlayerHaltState>();
-        //AddFreeFlowTransition<PlayerHaltState, DialogueState>();
-        //AddStaticTransition<DialogueState, EndPlayerHaltState>();
-        //AddStaticTransition<EndPlayerHaltState, GameState>();
-
-        // Exit
-        AddStaticTransition<GameState, MenuState>();
-
-        // GameMenu
-        AddFreeFlowTransition<GameState, GameMenuState>();
-        AddFreeFlowTransition<GameMenuState, MenuState>();
-        AddStaticTransition<GameMenuState, GameState>();
+        // Pause Menu
+        AddFreeFlowTransition<GameState, PauseMenuState>();
+        AddStaticTransition<PauseMenuState, GameState>();
+        AddFreeFlowTransition<PauseMenuState, ExitGameplayState>();
+        AddStaticTransition<ExitGameplayState, MenuState>();
 
         Start();
     }

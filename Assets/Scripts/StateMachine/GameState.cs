@@ -6,22 +6,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TarodevController;
 
 public class GameState : State
 {
     [Inject] GameManager _gameManager;
+    [Inject] PlayerController playerController;
 
     protected override void OnEnter()
     {
-        _gameManager._exitGameplayEvent += ExitGameplay;
+        _gameManager._pauseMenuEvent += PauseMenu;
+        playerController.UnpauseCharacter();
     }
 
     protected override void OnExit()
     {
-        _gameManager._exitGameplayEvent -= ExitGameplay;
+        _gameManager._pauseMenuEvent -= PauseMenu;
     }
 
-    void ExitGameplay () {
-
+    void PauseMenu () {
+        owningStateMachine.ToState<PauseMenuState>();
     }
 }

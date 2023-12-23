@@ -1,28 +1,31 @@
+using CardboardCore.DI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
+[Injectable]
 public class MenuManager : MonoBehaviour
 {
     public Action StartBtnEvent;
     public GameObject menuUI;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Button StartBtn;
+    public Button ExitBtn;
 
     public void SetMenuVisible (bool flag)
     {
-        menuUI.SetActive(true);
+        menuUI.SetActive(flag);
+
+        if (flag ) {
+            StartBtn.onClick.AddListener(StartBtnPressed);
+            ExitBtn.onClick.AddListener(ExitBtnPressed);
+        }
+        else {
+            StartBtn.onClick.RemoveAllListeners();
+            ExitBtn.onClick.RemoveAllListeners();
+        }
     }
 
     public void StartBtnPressed()
