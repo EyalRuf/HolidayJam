@@ -20,8 +20,8 @@ MonoBehaviour:
   HorizontalDeadZoneThreshold: 0.1
   MaxSpeed: 10
   Acceleration: 35
-  GroundDeceleration: 40
-  AirDeceleration: 45
+  GroundDeceleration: 75
+  AirDeceleration: 75
   GroundingForce: -1
   GrounderDistance: 0.1
   JumpPower: 32
@@ -30,5 +30,5 @@ MonoBehaviour:
   JumpEndEarlyGravityModifier: 1
   CoyoteTime: 0.15
   JumpBuffer: 0.15
-  DashPower: 10
-  DashCooldown: 2
+  DashPower: 30
+  DashCooldown: 1
