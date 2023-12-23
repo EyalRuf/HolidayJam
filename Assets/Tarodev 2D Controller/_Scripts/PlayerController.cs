@@ -1,5 +1,9 @@
+using JetBrains.Annotations;
 using System;
+using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace TarodevController
 {
@@ -20,65 +24,103 @@ namespace TarodevController
         private Vector2 _frameVelocity;
         private bool _cachedQueryStartInColliders;
 
-        #region Interface
+        // Dash-related variables
+        private bool isDashing;
+        private float lastClickTime;
+        private float lastClickdir;
+        private float _time;
+        public int dashCounter;
+        public int dashCounterUp;
 
+        #region Interface
         public Vector2 FrameInput => _frameInput.Move;
         public event Action<bool, float> GroundedChanged;
         public event Action Jumped;
 
         #endregion
 
-        private float _time;
-
-        private void Awake()
-        {
+        private void Awake() {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<CapsuleCollider2D>();
 
             _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
         }
 
-        private void Update()
-        {
+        private void Update() {
             _time += Time.deltaTime;
             GatherInput();
+
+            HandleDashInput();
         }
 
-        private void GatherInput()
-        {
-            _frameInput = new FrameInput
-            {
+        private void GatherInput() {
+            _frameInput = new FrameInput {
                 JumpDown = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.C),
                 JumpHeld = Input.GetButton("Jump") || Input.GetKey(KeyCode.C),
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"))
             };
 
-            if (_stats.SnapInput)
-            {
+            if (_stats.SnapInput) {
                 _frameInput.Move.x = Mathf.Abs(_frameInput.Move.x) < _stats.HorizontalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.x);
                 _frameInput.Move.y = Mathf.Abs(_frameInput.Move.y) < _stats.VerticalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.y);
             }
 
-            if (_frameInput.JumpDown)
-            {
+            if (_frameInput.JumpDown) {
                 _jumpToConsume = true;
                 _timeJumpWasPressed = _time;
             }
         }
 
-        private void FixedUpdate()
+        private void HandleDashInput()
         {
+            // Dash mechanic
+            bool rDown = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
+            bool lDown = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
+            bool rUp = Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.RightArrow);
+            bool lUp = Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.LeftArrow);
+            int direction = rDown ? 1 : lDown ? -1 : 0;
+            int directionUp = rUp ? 1 : lUp ? -1 : 0;
+
+            if (!isDashing) {
+                if (direction == 0) {
+                    if (directionUp != 0) {
+                        dashCounterUp = directionUp;
+                    }
+                } else {
+                    if (dashCounter == direction && direction == dashCounterUp && Time.time - lastClickTime <= 0.2f) {
+                        //dash
+                        _frameVelocity += new Vector2(direction * _stats.DashPower, 0f);
+                        isDashing = true;
+                        StartCoroutine(Dash());
+                    }
+
+                    lastClickTime = Time.time;
+                    dashCounter = direction;
+                }
+
+                Debug.Log("dir = " + direction);
+                Debug.Log("dirUp = " + directionUp);
+                Debug.Log("dashCounter = " + dashCounter);
+                Debug.Log("dashCounterUp = " + dashCounterUp);
+            }
+        }
+
+        IEnumerator Dash() {
+            yield return new WaitForSeconds(_stats.DashCooldown);
+            isDashing = false;
+        }
+
+        private void FixedUpdate() {
             CheckCollisions();
 
             HandleJump();
             HandleDirection();
             HandleGravity();
-            
             ApplyMovement();
         }
 
         #region Collisions
-        
+
         private float _frameLeftGrounded = float.MinValue;
         private bool _grounded;
 
