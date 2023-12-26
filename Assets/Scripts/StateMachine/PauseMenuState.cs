@@ -20,7 +20,7 @@ public class PauseMenuState : State
         _pauseMenuManager.ExitBtnEvent += ExitToMenu;
         _pauseMenuManager.SetPauseMenuVisible(true);
 
-        playerController.PauseCharacter();
+        playerController.PauseCharacter(2);
     }
 
     protected override void OnExit()

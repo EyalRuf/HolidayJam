@@ -20,6 +20,11 @@ public class ApplicationStateMachine : StateMachine
         AddFreeFlowTransition<PauseMenuState, ExitGameplayState>();
         AddStaticTransition<ExitGameplayState, MenuState>();
 
+        // Dialogue
+        AddFreeFlowTransition<GameState, DialogueState>();
+        AddStaticTransition<DialogueState, EndDialogueState>();
+        AddStaticTransition<EndDialogueState, GameState>();
+
         Start();
     }
 }

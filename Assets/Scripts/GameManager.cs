@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     private ApplicationStateMachine appStateMachine;
     public GameObject level;
+    public GameObject npcs;
     public PlayerController player;
 
     public Action _pauseMenuEvent;
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
     
     public void StartGame() {
         level.SetActive(true);
+        npcs.SetActive(true);
         player.gameObject.SetActive(true);  
 
         // init player stuff?
@@ -39,7 +41,8 @@ public class GameManager : MonoBehaviour
 
     public void EndGame() {
         level.SetActive(false);
-        player.PauseCharacter();
+        npcs.SetActive(false);
+        player.PauseCharacter(2);
         player.gameObject.SetActive(false);
 
         // reset everything here

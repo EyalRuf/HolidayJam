@@ -19,8 +19,11 @@ namespace TarodevController
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class PlayerController : MonoBehaviour, IPlayerController
     {
-        [Header("realshit")]
-        private bool isPaused = true;
+        [Header("interactions")]
+        public bool isInteracting = false;
+
+        [Header("etc")]
+        private int isPaused = 0;
         private Vector3 pausePos = Vector3.zero;
         private Vector3 pauseVel = Vector3.zero;
 
@@ -53,24 +56,31 @@ namespace TarodevController
             _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
         }
 
-        public void PauseCharacter () {
-            isPaused = true;
-            pausePos = _rb.position;
-            pauseVel = _rb.velocity;
-            _rb.velocity = Vector3.zero;
+        public void PauseCharacter(int pauseLevel) {
+            isPaused = pauseLevel;
 
+            if (pauseLevel == 2) {
+                pausePos = _rb.position;
+                pauseVel = _rb.velocity;
+                _rb.velocity = Vector3.zero;
+            }
         }
-        public void UnpauseCharacter() {
-            isPaused = false;
 
-            _rb.position = pausePos;
-            _rb.velocity = pauseVel;
+        public void UnpauseCharacter() {
+            if (isPaused == 2) {
+                _rb.position = pausePos;
+                _rb.velocity = pauseVel;
+            }
+
+            isPaused = 0;
         }
 
         private void Update() {
-            if (isPaused) {
-                _rb.position = pausePos;
-                _rb.velocity = Vector3.zero;
+            if (isPaused > 0) {
+                if (isPaused > 1) {
+                    _rb.position = pausePos;
+                    _rb.velocity = Vector3.zero;
+                }
 
                 return;
             }
@@ -134,7 +144,7 @@ namespace TarodevController
         }
 
         private void FixedUpdate() {
-            if (isPaused) {
+            if (isPaused > 1) {
                 return;
             }
 

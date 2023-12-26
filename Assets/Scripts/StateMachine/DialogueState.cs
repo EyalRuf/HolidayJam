@@ -1,30 +1,25 @@
 ﻿using CardboardCore.DI;
 using CardboardCore.StateMachines;
-using CardboardCore.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TarodevController;
 
 public class DialogueState : State
 {
-    //[Inject] MenuManager _menuManager;
+    [Inject] DialogueManager _dialogueManager;
+    [Inject] PlayerController _playerController;
 
-    protected override void OnEnter()
-    {
-        //_menuManager.StartBtnEvent += StartRun;
-        //_menuManager.SetMenuVisible(true);
+    protected override void OnEnter() {
+        _dialogueManager.EndDialogueEvent += DialogueEnded;
+        
+        _playerController.PauseCharacter(1);
+        _dialogueManager.StartDialogue();
     }
 
-    protected override void OnExit()
-    {
-        //_menuManager.StartBtnEvent -= StartRun;
-        //_menuManager.SetMenuVisible(false);
+    protected override void OnExit() {
+        _dialogueManager.EndDialogueEvent -= DialogueEnded;
+        _dialogueManager.EndDialogue();
     }
 
-    //void StartRun ()
-    //{
-    //    owningStateMachine.ToNextState();
-    //}
+    void DialogueEnded() {
+        owningStateMachine.ToNextState();
+    }
 }
