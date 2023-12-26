@@ -6,18 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TarodevController;
 
-public class InitGameState : State
+public class EndDialogueState : State
 {
-    [Inject] GameManager _gameManager;
-    [Inject] DialogueManager _dialogueManager;
+    //[Inject] DialogueManager _dialogueManager;
+    //[Inject] PlayerController _playerController;
 
     protected override void OnEnter()
     {
-        // init game stuff
-
-        _dialogueManager.ResetDialogues();
-        _gameManager.StartGame();
         owningStateMachine.ToNextState();
     }
 

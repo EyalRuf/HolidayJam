@@ -12,19 +12,24 @@ public class GameState : State
 {
     [Inject] GameManager _gameManager;
     [Inject] PlayerController playerController;
+    [Inject] DialogueManager _dialogueManager;
 
-    protected override void OnEnter()
-    {
+    protected override void OnEnter() {
         _gameManager._pauseMenuEvent += PauseMenu;
+        _dialogueManager.InvokeDialogueEvent += EngageDialogue;
         playerController.UnpauseCharacter();
     }
 
-    protected override void OnExit()
-    {
+    protected override void OnExit() {
         _gameManager._pauseMenuEvent -= PauseMenu;
+        _dialogueManager.InvokeDialogueEvent -= EngageDialogue;
     }
 
-    void PauseMenu () {
+    void PauseMenu() {
         owningStateMachine.ToState<PauseMenuState>();
+    }
+
+    void EngageDialogue() {
+        owningStateMachine.ToState<DialogueState>();
     }
 }
