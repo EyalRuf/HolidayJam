@@ -11,8 +11,14 @@ public class MenuState : State
 {
     [Inject] MenuManager _menuManager;
 
+    [Inject] DialogueManager _dialogueManager;
+    [Inject] NarrationManager _narrationManager;
+
     protected override void OnEnter()
     {
+        _narrationManager.ResetNarrations();
+        _dialogueManager.ResetDialogues();
+
         _menuManager.StartBtnEvent += StartGame;
         _menuManager.SetMenuVisible(true);
     }

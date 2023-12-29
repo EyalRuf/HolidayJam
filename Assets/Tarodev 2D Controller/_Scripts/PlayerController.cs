@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using CardboardCore.DI;
 using JetBrains.Annotations;
 using System;
@@ -26,10 +27,13 @@ namespace TarodevController
         private int isPaused = 0;
         private Vector3 pausePos = Vector3.zero;
         private Vector3 pauseVel = Vector3.zero;
+        public PlayerAnim playerAnimator;
+        public SpriteRenderer sr;
+
 
         [Header("shit")]
         [SerializeField] private ScriptableStats _stats;
-        private Rigidbody2D _rb;
+        public Rigidbody2D _rb;
         private CapsuleCollider2D _col;
         private FrameInput _frameInput;
         private Vector2 _frameVelocity;
@@ -63,6 +67,8 @@ namespace TarodevController
                 pausePos = _rb.position;
                 pauseVel = _rb.velocity;
                 _rb.velocity = Vector3.zero;
+
+                playerAnimator.animator.speed = 0;
             }
         }
 
@@ -70,6 +76,7 @@ namespace TarodevController
             if (isPaused == 2) {
                 _rb.position = pausePos;
                 _rb.velocity = pauseVel;
+                playerAnimator.animator.speed = 1;
             }
 
             isPaused = 0;
@@ -107,6 +114,12 @@ namespace TarodevController
                 _jumpToConsume = true;
                 _timeJumpWasPressed = _time;
             }
+
+            if (_frameInput.Move.x > 0) {
+                sr.flipX = false;
+            } else if (_frameInput.Move.x < 0) {
+                sr.flipX = true;
+            }
         }
 
         private void HandleDashInput()
@@ -129,6 +142,7 @@ namespace TarodevController
                         //dash
                         _frameVelocity += new Vector2(direction * _stats.DashPower, 0f);
                         isDashing = true;
+                        playerAnimator.Dash();
                         StartCoroutine(Dash());
                     }
 
@@ -159,7 +173,7 @@ namespace TarodevController
         #region Collisions
 
         private float _frameLeftGrounded = float.MinValue;
-        private bool _grounded;
+        public bool _grounded;
 
         private void CheckCollisions()
         {
@@ -224,6 +238,7 @@ namespace TarodevController
             _bufferedJumpUsable = false;
             _coyoteUsable = false;
             _frameVelocity.y = _stats.JumpPower;
+            playerAnimator.Jump();
             Jumped?.Invoke();
         }
 

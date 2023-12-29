@@ -12,12 +12,12 @@ public class DialogueManager : MonoBehaviour {
     public DialogueInteractionUI dialogueUI;
     public List<DialogueInteractionController> interactionControllers;
     public List<string> interactionControllerKeys;
+    private int currIntController = 0;
 
     [Header("Data")]
     public List<DialogueInteraction> dialogueInteractionList;
     private List<DialogueInteraction> gameDialogueInteractionList;
     private Dictionary<string, DialogueInteraction> dialogueInteractionsDic;
-    private int currIntController = 0;
 
     [Header("Events")]
     public Action InvokeDialogueEvent;
@@ -25,7 +25,7 @@ public class DialogueManager : MonoBehaviour {
 
     public void ResetDialogues () {
         gameDialogueInteractionList = new List<DialogueInteraction>();
-        dialogueInteractionList.ForEach(di => gameDialogueInteractionList.Add(di));
+        dialogueInteractionList.ForEach(di => gameDialogueInteractionList.Add(new DialogueInteraction(di)));
 
         dialogueInteractionsDic = new Dictionary<string, DialogueInteraction>();
         gameDialogueInteractionList.ForEach(di => {
