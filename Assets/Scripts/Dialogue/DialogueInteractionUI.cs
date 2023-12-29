@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,28 +9,64 @@ using UnityEngine.Events;
 public class DialogueInteractionUI : MonoBehaviour {
 
     [Header("general")]
-    public GameObject dialogueUIPanel;
+    public GameObject dialogueUIOutsidePanel;
+    public GameObject dialogueUIInsidePanel;
     public TextMeshProUGUI dialogueCharacterNameTextObj;
     public TextMeshProUGUI dialogueTextObj;
+    public bool isOn;
 
     [Header("answers")]
     public List<GameObject> answerObjs;
     public List<TextMeshProUGUI> answerTexts;
     public List<GameObject> answerLines;
 
-    public Action<int> answerChosenEvent;
+    public Action<int> AnswerChosenEvent;
+
+    [Header("dialogue-steps")]
+    public DialogueStep currDialogueStep;
+    public float fadeDuration = 1f;
+    public float textSpeed = 0.1f;
+    public float currTextProgress = 0;
+
+    void Update() {
+        //if (isOn) {
+        //    switch (currDialogueStep) {
+        //        case DialogueStep.FadeIn: {
+        //                break;
+        //            }
+        //        case DialogueStep.Text: {
+        //                break;
+        //            }
+        //        case DialogueStep.Answers: {
+        //                break;
+        //            }
+        //        case DialogueStep.FadeOut: {
+        //                break;
+        //            }
+        //        default: {
+        //                break;
+        //            }
+        //    }
+        //}
+    }
 
     private void ToggleUI (bool flag) {
-        dialogueUIPanel.SetActive(flag);
+        isOn = flag;
+        
+        dialogueUIOutsidePanel.SetActive(flag);
     }
 
     public void StartInteraction (DialogueInteraction interaction) {
         ToggleUI(true);
+        // Fade UI in
+
+        Sequence seq = DOTween.Sequence();
+        //seq.c
 
         SetDialogueNode(interaction.GetCurrentDialogueNode());
     }
-
     public void EndInteraction () {
+        // Fade UI out
         ToggleUI(false);
     }
 
@@ -39,6 +76,9 @@ public class DialogueInteractionUI : MonoBehaviour {
 
         answerObjs.ForEach(x => x.SetActive(false));
         answerLines.ForEach(x => x.SetActive(false));
+
+        currDialogueStep = 0;
+        currTextProgress = 0;
 
         var index = 0;
         dialogneNode.answers.ForEach(currAnswer => {
@@ -58,6 +98,13 @@ public class DialogueInteractionUI : MonoBehaviour {
     }
 
     public void OnAnswerSelected(int answerIndex) {
-        answerChosenEvent?.Invoke(answerIndex);
+        AnswerChosenEvent?.Invoke(answerIndex);
     }
+}
+public enum DialogueStep
+{
+    FadeIn = 0,
+    Text = 1,
+    Answers = 2,
+    FadeOut = 3,
 }

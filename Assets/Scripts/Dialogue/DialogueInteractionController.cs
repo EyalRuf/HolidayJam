@@ -19,11 +19,13 @@ public class DialogueInteractionController : MonoBehaviour {
     public float interactionDistance = 10f;
 
     void Update() {
-        if (!player.isInteracting && 
-                Vector2.Distance(player.transform.position, interactionTransform.position) <= interactionDistance && 
+        if (!player.isInteracting &&
+                Vector2.Distance(player.transform.position, interactionTransform.position) <= interactionDistance &&
                 Input.GetKeyDown(KeyCode.Space)) {
 
             dialogueManager.InvokeDialogueInteraction(dialogueControllerIndex);
+        } else {
+
         }
     }
 
@@ -31,15 +33,18 @@ public class DialogueInteractionController : MonoBehaviour {
         currDialogueInteraction = dialogueInteraction;
 
         dialogueUI.StartInteraction(currDialogueInteraction);
-        dialogueUI.answerChosenEvent += AnswerChosen;
+        dialogueUI.AnswerChosenEvent += AnswerChosen;
+
+        player.isInteracting = true;
     }
 
     public void CloseDialogue () {
         dialogueUI.EndInteraction();
+        player.isInteracting = false;
     }
 
     public void InvokeEndDialogueInteraction () {
-        dialogueUI.answerChosenEvent -= AnswerChosen;
+        dialogueUI.AnswerChosenEvent -= AnswerChosen;
         dialogueManager.InvokeEndDialogue();
     }
 
