@@ -24,8 +24,6 @@ public class DialogueInteractionController : MonoBehaviour {
                 Input.GetKeyDown(KeyCode.Space)) {
 
             dialogueManager.InvokeDialogueInteraction(dialogueControllerIndex);
-        } else {
-
         }
     }
 

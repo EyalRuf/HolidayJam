@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 public class InitGameState : State
 {
     [Inject] GameManager _gameManager;
-    [Inject] DialogueManager _dialogueManager;
+    //[Inject] DialogueManager _dialogueManager;
+    //[Inject] NarrationManager _narrationManager;
 
     protected override void OnEnter()
     {
         // init game stuff
 
-        _dialogueManager.ResetDialogues();
+        //_narrationManager.ResetNarrations();
+        //_dialogueManager.ResetDialogues();
         _gameManager.StartGame();
         owningStateMachine.ToNextState();
     }

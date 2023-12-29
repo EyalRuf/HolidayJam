@@ -9,9 +9,10 @@ public class ApplicationStateMachine : StateMachine
 {
     public ApplicationStateMachine(bool enableDebugging) : base(enableDebugging)
     {
-        // Menu
+        // Menu & Opening
         SetInitialState<MenuState>();
-        AddStaticTransition<MenuState, InitGameState>();
+        AddStaticTransition<MenuState, NarrationState>();
+        AddFreeFlowTransition<NarrationState, InitGameState>();
         AddStaticTransition<InitGameState, GameState>();
 
         // Pause Menu
@@ -19,6 +20,11 @@ public class ApplicationStateMachine : StateMachine
         AddStaticTransition<PauseMenuState, GameState>();
         AddFreeFlowTransition<PauseMenuState, ExitGameplayState>();
         AddStaticTransition<ExitGameplayState, MenuState>();
+
+        // Narration
+        AddFreeFlowTransition<GameState, NarrationState>();
+        AddStaticTransition<NarrationState, GameState>();
+        AddFreeFlowTransition<NarrationState, DialogueState>();
 
         // Dialogue
         AddFreeFlowTransition<GameState, DialogueState>();
