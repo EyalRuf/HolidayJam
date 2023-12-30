@@ -12,9 +12,11 @@ public class EndDialogueState : State
 {
     //[Inject] DialogueManager _dialogueManager;
     //[Inject] PlayerController _playerController;
+    [Inject] AudioManager _audioManager;
 
     protected override void OnEnter()
     {
+        _audioManager.EndDialogueAudio();
         owningStateMachine.ToNextState();
     }
 

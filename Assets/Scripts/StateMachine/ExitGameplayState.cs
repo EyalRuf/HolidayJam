@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 public class ExitGameplayState : State
 {
     [Inject] GameManager _gameManager;
+    [Inject] AudioManager _audioManager;
 
     protected override void OnEnter()
     {
         // end game stuff
         _gameManager.EndGame();
+        _audioManager.EndGameAudio();
 
         owningStateMachine.ToNextState();
     }

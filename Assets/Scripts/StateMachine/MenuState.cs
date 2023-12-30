@@ -13,6 +13,7 @@ public class MenuState : State
 
     [Inject] DialogueManager _dialogueManager;
     [Inject] NarrationManager _narrationManager;
+    [Inject] AudioManager _audioManager;
 
     protected override void OnEnter()
     {
@@ -21,6 +22,8 @@ public class MenuState : State
 
         _menuManager.StartBtnEvent += StartGame;
         _menuManager.SetMenuVisible(true);
+
+        _audioManager.StartMenuAudio();
     }
 
     protected override void OnExit()
@@ -29,6 +32,8 @@ public class MenuState : State
         
         //fade?
         _menuManager.SetMenuVisible(false);
+
+        _audioManager.EndMenuAudio();
     }
 
     void StartGame() {

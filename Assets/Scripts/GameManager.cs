@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         appStateMachine = new ApplicationStateMachine(true);
+        EndGame();
     }
 
     // Update is called once per frame

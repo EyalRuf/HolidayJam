@@ -26,9 +26,8 @@ public class NarratorController : MonoBehaviour
             return;
         }
 
-        if (!player.isInteracting &&
-            Vector2.Distance(player.transform.position, interactionTransform.position) <= interactionDistance &&
-            Input.GetKeyDown(KeyCode.Space)) {
+        if (!currNarrationInteraction.IsDone() && !player.isInteracting &&
+            Vector2.Distance(player.transform.position, interactionTransform.position) <= interactionDistance) {
 
             narrationManager.InvokeNarration(narrControllerIndex);
         }

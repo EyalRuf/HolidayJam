@@ -25,12 +25,18 @@ public class NarrationManager : MonoBehaviour
 
     public void ResetNarrations() {
         gameNarrationInteractions = new List<NarrationInteraction>();
-        narrationInteractions.ForEach(di => gameNarrationInteractions.Add(di));
+        narrationInteractions.ForEach(di => gameNarrationInteractions.Add(new NarrationInteraction(di)));
 
         narrationsDic = new Dictionary<string, NarrationInteraction>();
         gameNarrationInteractions.ForEach(di => {
             narrationsDic.Add(di.narrationInteractionKey, di);
         });
+
+        for (var i = 0; i < narrationControllers.Count; i++) {
+            narrationControllers[i].currNarrationInteraction = narrationsDic[narrationControllerKeys[i]];
+        }
+
+        currNarrController = 0;
     }
 
     public bool isOpeningNarration() {

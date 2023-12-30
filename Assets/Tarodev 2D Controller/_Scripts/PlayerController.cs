@@ -63,6 +63,10 @@ namespace TarodevController
         public void PauseCharacter(int pauseLevel) {
             isPaused = pauseLevel;
 
+            _frameInput.Move = Vector2.zero;
+            _frameInput.JumpHeld = false;
+            _frameInput.JumpDown = false;
+
             if (pauseLevel == 2) {
                 pausePos = _rb.position;
                 pauseVel = _rb.velocity;
@@ -76,9 +80,9 @@ namespace TarodevController
             if (isPaused == 2) {
                 _rb.position = pausePos;
                 _rb.velocity = pauseVel;
-                playerAnimator.animator.speed = 1;
             }
 
+            playerAnimator.animator.speed = 1;
             isPaused = 0;
         }
 
