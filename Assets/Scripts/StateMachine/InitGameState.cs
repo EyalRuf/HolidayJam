@@ -12,6 +12,7 @@ public class InitGameState : State
     [Inject] GameManager _gameManager;
     //[Inject] DialogueManager _dialogueManager;
     //[Inject] NarrationManager _narrationManager;
+    [Inject] AudioManager _audioManager;
 
     protected override void OnEnter()
     {
@@ -20,6 +21,8 @@ public class InitGameState : State
         //_narrationManager.ResetNarrations();
         //_dialogueManager.ResetDialogues();
         _gameManager.StartGame();
+        _audioManager.StartGameAudio();
+
         owningStateMachine.ToNextState();
     }
 

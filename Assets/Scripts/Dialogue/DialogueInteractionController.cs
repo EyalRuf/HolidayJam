@@ -1,10 +1,12 @@
 ﻿using CardboardCore.DI;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TarodevController;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
 public class DialogueInteractionController : MonoBehaviour {
     [Header("REFS")]
@@ -17,11 +19,31 @@ public class DialogueInteractionController : MonoBehaviour {
     public DialogueInteraction currDialogueInteraction;
     public Transform interactionTransform;
     public float interactionDistance = 10f;
+    public Light2D l;
+
+    void Start() {
+        IntensityBreath1();
+    }
+
+    void IntensityBreath1 () {
+        float intensity = 0.9f;
+
+        DOTween.To(() => intensity, (x) => intensity = x, 0.6f, 2f).OnUpdate(() => {
+            l.intensity = intensity;
+        }).OnComplete(() => IntensityBreath2());
+    }
+    void IntensityBreath2() {
+        float intensity = 0.6f;
+
+        DOTween.To(() => intensity, (x) => intensity = x, 0.9f, 2f).OnUpdate(() => {
+            l.intensity = intensity;
+        }).OnComplete(() => IntensityBreath1());
+    }
 
     void Update() {
         if (!player.isInteracting &&
                 Vector2.Distance(player.transform.position, interactionTransform.position) <= interactionDistance &&
-                Input.GetKeyDown(KeyCode.Space)) {
+                Input.GetKeyDown(KeyCode.Return)) {
 
             dialogueManager.InvokeDialogueInteraction(dialogueControllerIndex);
         }
@@ -60,8 +82,8 @@ public class DialogueInteractionController : MonoBehaviour {
         // DO MORE THINGS AFTER ANSWER
         EndNode();
 
+        currDialogueInteraction.currentDialogueNodeKey = answer.nextDialogueNode;
         if (!answer.doesEndDialogue) {
-            currDialogueInteraction.currentDialogueNodeKey = answer.nextDialogueNode;
             StartNode();
         } else {
             InvokeEndDialogueInteraction();

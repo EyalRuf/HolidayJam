@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class DialogueInteractionUI : MonoBehaviour {
+    [Header("ref")]
+    public AudioManager audioManager;
 
     [Header("general")]
     public GameObject dialogueUIOutsidePanel;
@@ -99,6 +101,7 @@ public class DialogueInteractionUI : MonoBehaviour {
 
     public void OnAnswerSelected(int answerIndex) {
         AnswerChosenEvent?.Invoke(answerIndex);
+        audioManager.PlayMenuClick();
     }
 }
 public enum DialogueStep

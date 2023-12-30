@@ -12,11 +12,13 @@ namespace Assets.Scripts
         [Header("AnimParams")]
         public float goingUpMin = 2f;
         public float goingDownMin = -0.5f;
+        public bool isRunning;
 
         // Update is called once per frame
         void Update() {
+            isRunning = player._grounded && Mathf.Abs(player._rb.velocity.x) > 0;
+            animator.SetBool("isRunning", isRunning);
             animator.SetBool("isGrounded", player._grounded);
-            animator.SetBool("isRunning", Mathf.Abs(player._rb.velocity.x) > 0);
 
             animator.SetBool("goingUp", player._rb.velocity.y > goingUpMin);
             animator.SetBool("goingDown", player._rb.velocity.y < goingDownMin);

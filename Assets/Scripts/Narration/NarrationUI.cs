@@ -14,6 +14,7 @@ public class NarrationUI : MonoBehaviour
     public List<Image> imagesUI;
     public TextMeshProUGUI narrationTextObj;
     public TextMeshProUGUI skipTextObj;
+    public AudioManager audioManager;
 
     [Header("NARRATION")]
     private NarrationInteraction narratorInteraction;
@@ -24,6 +25,7 @@ public class NarrationUI : MonoBehaviour
     public float fadeSpeed = 2;
     public bool canNextText = false;
     public float imageAlpha = 0.1f;
+    public bool isTexting = false;
 
     Sequence fadeInSequence;
     Sequence textSequence;
@@ -32,6 +34,8 @@ public class NarrationUI : MonoBehaviour
 
     [Header("EVENTS")]
     public Action NarrationOver;
+
+    private Tween skipTextTween;
 
     void Start() {
         DOTween.defaultEaseType = Ease.Linear;
@@ -50,6 +54,7 @@ public class NarrationUI : MonoBehaviour
         } else {
             if (isSkipBtnDown) {
                 parentSequence.timeScale = 3;
+                audioManager.FastTextAudio();
             }
         }
     }
@@ -78,12 +83,14 @@ public class NarrationUI : MonoBehaviour
     private void ClickedNextTextNode() {
         if (parentSequence.active) {
             parentSequence.Complete(true);
-        } 
-        else {
+        } else {
 
             if (!narratorInteraction.IsDone()) {
                 SetTextSequence();
                 skipTextObj.color = new Color(1, 1, 1, 0);
+                if (skipTextTween != null) {
+                    skipTextTween.Kill();
+                }
             } else {
                 SetFadeOutSequence();
             }
@@ -125,13 +132,13 @@ public class NarrationUI : MonoBehaviour
 
         textSequence.Append(TextSequence());
         canNextText = false;
+        audioManager.SlowTextAudio();
 
         parentSequence = DOTween.Sequence().Append(textSequence).OnComplete(() => {
 
             canNextText = true;
             narratorInteraction.currNodeIndex++;
-
-            skipTextObj.DOColor(new Color(1, 1, 1, 0.5f), 3f).SetDelay(3f);
+            skipTextTween = skipTextObj.DOColor(new Color(1, 1, 1, 0.5f), 3f).SetDelay(3f);
         });
     }
 
@@ -157,8 +164,9 @@ public class NarrationUI : MonoBehaviour
         string nodeText = narratorInteraction.GetCurrentText();
 
         return DOTween.To(() => typeWriterText, (x) => typeWriterText = x, nodeText, textSpeed).OnUpdate(() => {
+            isTexting = true;
             narrationTextObj.text = typeWriterText;
-        });
+        }).OnComplete(() => isTexting = false);
     }
 
     Sequence FadeOutSequence () {
